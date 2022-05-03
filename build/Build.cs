@@ -27,7 +27,7 @@ using static Nuke.Common.Tools.Git.GitTasks;
     AutoGenerate = true,
     OnWorkflowDispatchRequiredInputs = new[] { nameof(Version) },
     InvokedTargets = new []{ nameof(Push) },
-    ImportSecrets = new[] { "NUGET_TOKEN"})]
+    ImportSecrets = new[] { "NUGET_TOKEN", "GITHUB_TOKEN" })]
 [GitHubActions(
     "PullRequest",
     GitHubActionsImage.UbuntuLatest,
@@ -52,7 +52,7 @@ class Build : NukeBuild
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
     [CI] readonly GitHubActions GitHubActions;
-
+    
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath OutputDirectory => RootDirectory / "output";
     AbsolutePath TargetProjectDirectory => SourceDirectory / "Library";
@@ -161,9 +161,12 @@ class Build : NukeBuild
         .Requires(() => Version)
         .Executes(() =>
         {
-            Git($"config --global user.email \"{GitHubActions.Actor}@users.noreply.github.com\"");
-            Git($"config --global user.name \"{GitHubActions.Actor}\"");
-            Git($"tag v{Version}");
-            Git($"push origin --tags");
+            var tokenAuth = new Credentials(GitHubActions.Token);
+            var github = new GitHubClient(new ProductHeaderValue("Build script"))
+            {
+                Credentials = tokenAuth
+            };
+            var split = GitHubActions.Repository.Split("/");
+            github.Git.Tag.Create(split[0], split[1], new NewTag { Tag = $"v{Version}" });
         });
 }
