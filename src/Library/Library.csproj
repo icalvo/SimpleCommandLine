@@ -6,15 +6,18 @@
     <Nullable>enable</Nullable>
     <AssemblyName>SimpleCommandLine</AssemblyName>
     <RootNamespace>SimpleCommandLine</RootNamespace>
+    <IsPackable>true</IsPackable>
     <PackageId>Ic.SimpleCommandLine</PackageId>
     <Title>SimpleCommandLine</Title>
     <Authors>Ignacio Calvo</Authors>
     <Description>A simple, yet powerful command line parser.</Description>
     <PackageProjectUrl>https://github.com/icalvo/SimpleCommandLine</PackageProjectUrl>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
     <RepositoryUrl>https://github.com/icalvo/SimpleCommandLine.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>command line</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <InformationalVersion>0.0.0-dev</InformationalVersion>
   </PropertyGroup>
 
 </Project>
