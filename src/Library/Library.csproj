@@ -4,6 +4,17 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>SimpleCommandLine</AssemblyName>
+    <RootNamespace>SimpleCommandLine</RootNamespace>
+    <PackageId>Ic.SimpleCommandLine</PackageId>
+    <Title>SimpleCommandLine</Title>
+    <Authors>Ignacio Calvo</Authors>
+    <Description>A simple, yet powerful command line parser.</Description>
+    <PackageProjectUrl>https://github.com/icalvo/SimpleCommandLine</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/icalvo/SimpleCommandLine.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>command line</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
 </Project>
