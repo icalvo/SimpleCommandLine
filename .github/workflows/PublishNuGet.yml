@@ -41,7 +41,8 @@ jobs:
         env:
           Version: ${{ github.event.inputs.Version }}
           NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v1
         with:
           name: nupkg
-          path: src/CommandLine/nupkg
+          path: src/Library/nupkg
