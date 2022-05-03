@@ -55,8 +55,8 @@ class Build : NukeBuild
 
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath OutputDirectory => RootDirectory / "output";
-
-    AbsolutePath PackageDirectory => SourceDirectory / "CommandLine" / "nupkg";
+    AbsolutePath TargetProjectDirectory => SourceDirectory / "Library";
+    AbsolutePath PackageDirectory => TargetProjectDirectory / "nupkg";
 
     string MainVersion
     {
@@ -136,7 +136,7 @@ class Build : NukeBuild
         .Executes(() =>
         {
             DotNetPack(s => s
-                .SetProject(SourceDirectory / "Library")
+                .SetProject(TargetProjectDirectory)
                 .SetConfiguration(Configuration)
                 .EnableNoBuild()
                 .SetProperty("PackageVersion", Version));
