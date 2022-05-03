@@ -159,7 +159,7 @@ class Build : NukeBuild
         .Description("🏷 Tag commit and push")
         .Requires(() => GitHubActions)
         .Requires(() => Version)
-        .Executes(() =>
+        .Executes(async () =>
         {
             var tokenAuth = new Credentials(GitHubActions.Token);
             var github = new GitHubClient(new ProductHeaderValue("build-script"))
@@ -167,12 +167,20 @@ class Build : NukeBuild
                 Credentials = tokenAuth
             };
             var split = GitHubActions.Repository.Split("/");
-            github.Git.Tag.Create(split[0], split[1], new NewTag
-            {
-                Tag = $"v{Version}",
-                Object = GitHubActions.Ref,
-                Type = TaggedType.Commit,
-                Tagger = new Committer(GitHubActions.Actor, $"{GitHubActions.Actor}@users.noreply.github.com", DateTimeOffset.UtcNow)
-            });
+            GitTag tag = await github.Git.Tag.Create(
+                split[0],
+                split[1],
+                new NewTag
+                {
+                    Tag = $"v{Version}",
+                    Object = GitHubActions.Ref,
+                    Type = TaggedType.Commit,
+                    Tagger = new Committer(GitHubActions.Actor, $"{GitHubActions.Actor}@users.noreply.github.com", DateTimeOffset.UtcNow)
+                });
+
+            await github.Git.Reference.Create(
+                split[0],
+                split[1],
+                new NewReference($"refs/tags/v{Version}", tag.Object.Sha));
         });
 }
