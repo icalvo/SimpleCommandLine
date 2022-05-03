@@ -162,7 +162,7 @@ class Build : NukeBuild
         .Executes(() =>
         {
             var tokenAuth = new Credentials(GitHubActions.Token);
-            var github = new GitHubClient(new ProductHeaderValue("Build script"))
+            var github = new GitHubClient(new ProductHeaderValue("build-script"))
             {
                 Credentials = tokenAuth
             };
