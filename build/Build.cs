@@ -167,6 +167,12 @@ class Build : NukeBuild
                 Credentials = tokenAuth
             };
             var split = GitHubActions.Repository.Split("/");
-            github.Git.Tag.Create(split[0], split[1], new NewTag { Tag = $"v{Version}" });
+            github.Git.Tag.Create(split[0], split[1], new NewTag
+            {
+                Tag = $"v{Version}",
+                Object = GitHubActions.Ref,
+                Type = TaggedType.Commit,
+                Tagger = new Committer(GitHubActions.Actor, $"{GitHubActions.Actor}@users.noreply.github.com", DateTimeOffset.UtcNow)
+            });
         });
 }
