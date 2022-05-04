@@ -174,7 +174,7 @@ class Build : NukeBuild
                 new NewTag
                 {
                     Tag = $"v{Version}",
-                    Object = GitHubActions.Ref,
+                    Object = GitHubActions.Sha,
                     Type = TaggedType.Commit,
                     Tagger = new Committer(GitHubActions.Actor, $"{GitHubActions.Actor}@users.noreply.github.com", DateTimeOffset.UtcNow),
                     Message = "Package published in NuGet.org"
