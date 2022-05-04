@@ -25,6 +25,7 @@ using static Nuke.Common.Tools.Git.GitTasks;
     "PublishNuGet",
     GitHubActionsImage.UbuntuLatest,
     AutoGenerate = true,
+    
     OnWorkflowDispatchRequiredInputs = new[] { nameof(Version) },
     InvokedTargets = new []{ nameof(Push) },
     ImportSecrets = new[] { "NUGET_TOKEN", "GITHUB_TOKEN" })]
@@ -175,7 +176,8 @@ class Build : NukeBuild
                     Tag = $"v{Version}",
                     Object = GitHubActions.Ref,
                     Type = TaggedType.Commit,
-                    Tagger = new Committer(GitHubActions.Actor, $"{GitHubActions.Actor}@users.noreply.github.com", DateTimeOffset.UtcNow)
+                    Tagger = new Committer(GitHubActions.Actor, $"{GitHubActions.Actor}@users.noreply.github.com", DateTimeOffset.UtcNow),
+                    Message = "Package published in NuGet.org"
                 });
 
             await github.Git.Reference.Create(
