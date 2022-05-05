@@ -5,9 +5,9 @@ public class SubCommand
     public static int InvalidNumberOfArgumentsReturnCode { get; set; }
     public static int CommandNotProvidedReturnCode { get; set; } 
     public static int UnknownCommandReturnCode { get; set; } 
-    public static int AmbiguousCommandReturnCode { get; set; } 
+    public static int AmbiguousCommandReturnCode { get; set; }
 
-    private readonly string _name;
+    public string Name { get; }
     private readonly Argument[] _arguments;
     private readonly Option[] _options;
     private readonly SubCommand[] _subcommands;
@@ -31,13 +31,13 @@ public class SubCommand
         SubCommand[] subcommands,
         Func<SubCommand, Dictionary<string, string>, Dictionary<string, string>, Task<int>>? properExecuteAsync)
     {
-        _name = name;
+        Name = name;
         _description = description;
         _arguments = arguments;
         _options = options.Append(new Option("--help", "Shows help", "-h", "-?")).ToArray();
         _subcommands = subcommands;
         _properExecuteAsync = properExecuteAsync ?? ((_, _, _) => Task.FromResult(0)) ;
-        _ = subcommands.ToDictionary(x => x._name);
+        _ = subcommands.ToDictionary(x => x.Name);
 
         foreach (var command in subcommands)
         {
@@ -93,7 +93,7 @@ public class SubCommand
         var optionsUsage = _options.Length == 0 ? "" : " [options]";
         var argumentsUsage = _arguments.Length == 0 ? "" : " " + _arguments.Select(x => x.Name).StringJoin(" ");
         var commandsUsage = _subcommands.Length == 0 ? "" : " command";
-        return $"{_name}{optionsUsage}{argumentsUsage}{commandsUsage}";        
+        return $"{Name}{optionsUsage}{argumentsUsage}{commandsUsage}";        
     }
 
     private string Help
@@ -110,7 +110,7 @@ public class SubCommand
                     .Select(c => $"{c.Name.PadRight(definitionsArray.Max(x => x.Name.Length))}  {c.Description}");
             }
 
-            var breadcrumb = this.FollowLinks(c => c._parent).Reverse().Select(c => c._name).StringJoin(" ");
+            var breadcrumb = this.FollowLinks(c => c._parent).Reverse().Select(c => c.Name).StringJoin(" ");
             var completeUsage = $"{breadcrumb} {Usage()}";
             var arguments = FormatDefinitions(_arguments.Select(c => (c.Name, c.Description)));
             var options = FormatDefinitions(_options.Select(c =>
@@ -149,7 +149,6 @@ public class SubCommand
             Command = command;
             Options = options;
             Arguments = arguments;
-            ;
         }
     }
 
@@ -166,7 +165,8 @@ public class SubCommand
             ErrorCode = errorCode;
         }
     }
-    internal ParseResult Parse(string[] args)
+
+    public ParseResult Parse(params string[] args)
     {
         using var tokenCursor = args.AsEnumerable().GetEnumerator();
         var tokenExists = tokenCursor.MoveNext();
@@ -214,7 +214,7 @@ public class SubCommand
             return new ParseFailure(this, "Required command was not provided.", CommandNotProvidedReturnCode);
         }
 
-        var matchingCommands = _subcommands.Where(x => x._name.StartsWith(args[0])).ToArray();
+        var matchingCommands = _subcommands.Where(x => x.Name.StartsWith(args[0])).ToArray();
 
         if (matchingCommands.Length == 0)
         {
@@ -223,7 +223,7 @@ public class SubCommand
 
         if (matchingCommands.Length > 1)
         {
-            return new ParseFailure(this, "Ambiguous command, could be one of:" + matchingCommands.OrderBy(x => x._name).StringJoin(", "), AmbiguousCommandReturnCode);
+            return new ParseFailure(this, "Ambiguous command, could be one of:" + matchingCommands.OrderBy(x => x.Name).StringJoin(", "), AmbiguousCommandReturnCode);
         }
 
         var command = matchingCommands.Single();
@@ -310,7 +310,7 @@ public class SubCommand
             return CommandNotProvidedReturnCode;
         }
 
-        var matchingCommands = _subcommands.Where(x => x._name.StartsWith(args[0])).ToArray();
+        var matchingCommands = _subcommands.Where(x => x.Name.StartsWith(args[0])).ToArray();
 
         if (matchingCommands.Length == 0)
         {
@@ -323,9 +323,9 @@ public class SubCommand
         if (matchingCommands.Length > 1)
         {
             Console.WriteLine("Ambiguous command, you have to use more letters so that one of the following is unambiguously chosen:");
-            foreach (SubCommand c in matchingCommands.OrderBy(x => x._name))
+            foreach (SubCommand c in matchingCommands.OrderBy(x => x.Name))
             {
-                Console.WriteLine(c._name);
+                Console.WriteLine(c.Name);
             }
 
             return AmbiguousCommandReturnCode;
