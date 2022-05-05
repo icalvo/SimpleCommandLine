@@ -25,7 +25,6 @@ using static Nuke.Common.Tools.Git.GitTasks;
     "PublishNuGet",
     GitHubActionsImage.UbuntuLatest,
     AutoGenerate = true,
-    
     OnWorkflowDispatchRequiredInputs = new[] { nameof(Version) },
     InvokedTargets = new []{ nameof(Push) },
     ImportSecrets = new[] { "NUGET_TOKEN", "GITHUB_TOKEN" })]

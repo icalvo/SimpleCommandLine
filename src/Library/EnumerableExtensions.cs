@@ -1,4 +1,4 @@
-namespace Scheduler.CommandLine;
+namespace SimpleCommandLine;
 
 public static class EnumerableExtensions
 {
